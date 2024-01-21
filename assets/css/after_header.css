@@ -5,7 +5,7 @@ body {
 }
 
 header {
-    background-color: rgb(148, 254, 254);
+    background-color: rgb(0, 203, 203);
     height: 70px;
     display: flex;
 }
