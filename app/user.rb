@@ -27,8 +27,14 @@ class User
         user = User.new(row['username'], row['pawwword_hash'])
         # User オブジェクトにデータベースから取得したユーザーIDを設定
         user.user_id = row['user_id']
+        # 作成した User オブジェクトを返す
+        user
     end
 
-    # 作成した User オブジェクトを返す
-    user
+    # パスワードの一致を確認
+    def authenticate(password)
+        BCrypt::Password.new(password_hash) == password
+    end
 end
+
+
