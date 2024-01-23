@@ -5,7 +5,7 @@
 }
 
 .container {
-    width: 60%;
+    width: 48%;
     margin: auto;
 }
 
@@ -16,13 +16,13 @@
 .form-wrapper {
     border: 2px solid rgb(0, 203, 203);
     background-color: white;
-    padding: 20px 0 20px 0;
+    padding: 45px 0;
     border-radius: 30px;
 }
 
 form {
-    width: 60%;
-    margin: auto;
+    width: 48%;
+    margin: 0 50px;
 }
 
 .item-name {
@@ -30,11 +30,10 @@ form {
 }
 
 .date {
-    margin-right: 45px;
+    margin-right: 46px;
 }
 
 .text {
-    width: 350px;
     margin-bottom: 10px;
     border-radius: 5px;
     border-color: rgb(0, 203, 203);
@@ -42,7 +41,7 @@ form {
 
 textarea {
     height: 100px;
-    width: 500px;
+    width: 600px;
     margin-top: 5px;
 }
 
