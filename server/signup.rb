@@ -43,8 +43,8 @@ server.mount_proc('/signup') do |req, res|
     # save_user_to_databaseメソッドを呼び出してユーザデータをデータベースに挿入
     save_user_to_database(username, password)
 
-    # サインアップの処理が成功したら'/diary-lsit'のURLにリダイレクト（今はページがないので、URLだけが変化するはず）
-    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/diary-list')
+    # サインアップの処理が成功したら'/top'のURLにリダイレクト
+    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top')
   else
 
     # リクエストメソッドがPOSTでない場合はエラーレスポンスを設定
