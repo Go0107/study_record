@@ -36,13 +36,14 @@ form {
 .text {
     margin-bottom: 10px;
     border-radius: 5px;
-    border-color: rgb(0, 203, 203);
+    border: 3px inset rgb(0, 203, 203);
 }
 
 textarea {
     height: 100px;
     width: 600px;
     margin-top: 5px;
+    font-size: large;
 }
 
 .textarea_name {
