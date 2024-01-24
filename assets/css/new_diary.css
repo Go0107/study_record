@@ -41,7 +41,7 @@ form {
 
 textarea {
     height: 100px;
-    width: 600px;
+    width: 595px;
     margin-top: 5px;
     font-size: large;
 }
@@ -67,3 +67,9 @@ textarea {
     position: relative;
     top: 7px;
 }
+
+select {
+    border: 2px inset rgb(0, 203, 203);
+    border-radius: 5px;
+}
+
