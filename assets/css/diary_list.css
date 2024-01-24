@@ -1,6 +1,11 @@
 body {
     background-image: url(../images/background_logo.png);
     text-align: center;
+    min-width: 640px;
+}
+
+h3 {
+  margin: 20px 0 0 0;
 }
 
 .info-list {
@@ -8,7 +13,15 @@ body {
     border-color: rgb(0, 203, 203, 0.3);
     margin: 30px;
     text-align: left;
-    display: flex;
+    min-width: 540px;
+}
+
+.top-items {
+  display: flex;
+}
+
+.bottom-items {
+  display: flex;
 }
 
 .left-item {
@@ -18,8 +31,7 @@ body {
 }
 
 .right-item {
-    margin: 0;
-    white-space: nowrap;
+    margin: 0 20px 0 50px;
 }
 
 .right-item ul {
@@ -28,7 +40,12 @@ body {
 
 .text-content {
     margin: 20px;
+    
+}
+
+.text-content p{
     min-width: 200px;
+    max-width: 400px;
 }
 
 .fa-heart {
@@ -55,6 +72,7 @@ body {
       inset 2px 2px 3px rgb(255 255 255 / 60%),
       inset -2px -2px 3px rgba(159, 158, 158, 0.6);
     margin-top: 40px;
+    margin-left: 20px;
   }
   
   .styled:hover {
