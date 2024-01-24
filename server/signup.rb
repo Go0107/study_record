@@ -1,3 +1,5 @@
+require_relative 'top.rb'
+
 require 'webrick'
 require 'mysql2'
 require 'digest'
@@ -5,7 +7,7 @@ require 'digest'
 $db_client = Mysql2::Client.new(
   host: 'localhost',       # 全員、localhostでOKです
   username: 'root',        # ひとまず、権限を一番持っているrootユーザーにしました
-  password: '',   # 自身のmysqlのrootユーザーのパスワードをここに入力します
+  password: '0606araki',   # 自身のmysqlのrootユーザーのパスワードをここに入力します
   database: 'study_record' # 全員、study_recordでOKです（自身のPCにstudy_recordのデータベースを作成してください）
 )
 
@@ -30,11 +32,10 @@ server = WEBrick::HTTPServer.new(Port: 3000)
 trap('INT') { server.shutdown }
 
 # ERB（Embedded Ruby）ハンドラを使用してsignupページを提供
-server.mount('/', WEBrick::HTTPServlet::ERBHandler, '../pages/signup.html')
+server.mount('/signup.html', WEBrick::HTTPServlet::ERBHandler, 'study_record/pages/signup.html')
 
 # 'assets'ディレクトリから静的なアセット（例: CSS、画像）を提供
-server.mount('/assets', WEBrick::HTTPServlet::FileHandler, File.join(Dir.pwd, '../assets'))
-
+server.mount('/assets', WEBrick::HTTPServlet::FileHandler, File.join(Dir.pwd, 'assets'))
 # '/signup'エンドポイントへのPOSTリクエストを処理
 server.mount_proc('/signup') do |req, res|
   if req.request_method == 'POST'
