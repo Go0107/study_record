@@ -16,44 +16,19 @@
             <div class="form-wrapper">
                 <form action="" method="post" id="post-diary">
                     <div>
-                        <label class="item-name date" for="date">日にち</label>
+                        <label class="item-name date" for="name">日にち</label>
                         <input class="text" type="text" id="date" name="date">
                     </div>
                     <div>
-                        <label class="item-name" for="name">投稿者名</label>
+                        <label class="item-name" for="password">投稿者名</label>
                         <input class="text" type="text" id="name" name="name">
                     </div>
                     <div>
-                        <label class="item-name" for="study_time">学習時間</label>
-                        <select name="hours-number">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                            <option value="13">13</option>
-                            <option value="14">14</option>
-                            <option value="15">15</option>
-                            <option value="16">16</option>
-                            <option value="17">17</option>
-                            <option value="18">18</option>
-                            <option value="19">19</option>
-                            <option value="20">20</option>
-                            <option value="21">21</option>
-                            <option value="22">22</option>
-                            <option value="23">23</option>
-                            <option value="24">24</option>
-                        </select>
+                        <label class="item-name" for="password">学習時間</label>
+                        <input class="text" type="text" id="study-time" name="study-time">
                     </div>
                     <div class="textarea-wrapper">
-                        <label class="item-name textarea_name" for="study-content">学習内容</label>
+                        <label class="item-name textarea_name" for="password">学習内容</label>
                         <textarea class="text" type="text" id="study-content" name="study-content"></textarea>
                     </div>
                     <div class="textarea-wrapper">
@@ -65,6 +40,5 @@
             <input class="submit" type="submit" value="投稿する" form="post-diary">
         </div>
     </div>
-    <script src="../js/new_diary.js"></script>
 </body>
 </html>
