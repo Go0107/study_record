@@ -7,7 +7,7 @@ require 'digest'
 $db_client = Mysql2::Client.new(
     host: 'localhost',
     username: 'root',
-    password: '0606araki',
+    password: '@ZSExdr123',
     database: 'study_record'
 )
 
@@ -62,4 +62,3 @@ server.mount_proc('/login') do |req, res|
 end
 
 # WEBrick HTTPサーバーを起動
-server.start
