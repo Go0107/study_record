@@ -12,10 +12,11 @@ client = Mysql2::Client.new(
     port: '3000'
 )
 
-# test変数にdiary_list.htmlファイルの中身を入れている
-test = File.read("../pages/diary_list.html")
+# test変数にmy_page.htmlファイルの中身を入れている
+test = File.read("../pages/my_page.html")
 
 # reportsテーブルから全部のデータを取得
+# ここでuser_idを絞れば後はおんなじ感じで行けるかも？
 result = client.query("SELECT * FROM reports")
 
 # reportsテーブルから持ってきたカラムを配列で取得
@@ -24,7 +25,6 @@ study_time = result.map { |row| row['study_time'] }
 created_time = result.map { |row| row['created_at'] }
 study_content = result.map { |row| row['study_content'] }
 reflection = result.map { |row| row['reflection'] }
-report_id = result.map { |row| row['report_id'] }
 username = client.query("SELECT u.username FROM reports r INNER JOIN users u ON r.user_id = u.user_id;").map { |row| row['username'] }
 
 # 名前の数から繰り返し処理を何回行うかを決める
@@ -36,7 +36,7 @@ result_html = ""
 
 while num < data_count do
     html_template = ERB.new('
-        <div class="info-list" id="<%= report_id[num] %>">
+        <div class="info-list" id="<%= num %>">
             <div class="top-items">
                 <ul class="left-item">
                     <li><h4>日付<br><%= date[num] %></h4></li>
@@ -68,15 +68,14 @@ while num < data_count do
 end
 
 # すでに入っているhtmlを初期化する
-test.sub!(/<main>.*?<\/main>/m, '<main><h1 class="title">日報一覧</h1></main>')
+test.sub!(/<main>.*?<\/main>/m, '<main><h1 class="title">マイページ</h1></main>')
 
 # 既存のHTMLに新しいHTMLコードを挿入
 modified_html = test.gsub(/<\/main>/, "#{result_html}</main>")
 
 # 変更を適用した新しいHTMLを保存
-File.open('../pages/diary_list.html', 'w') do |file|
+File.open('../pages/my_page.html', 'w') do |file|
     file.puts modified_html
 end
 
 puts 'HTMLを作成しました'
-
