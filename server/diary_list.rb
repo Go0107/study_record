@@ -24,11 +24,11 @@ study_time = result.map { |row| row['study_time'] }
 created_time = result.map { |row| row['created_at'] }
 study_content = result.map { |row| row['study_content'] }
 reflection = result.map { |row| row['reflection'] }
-report_id = result.map { |row| row['report_id'] }
+report_id = result.map { |row| row['report_id'] }.sort.reverse
 username = client.query("SELECT u.username FROM reports r INNER JOIN users u ON r.user_id = u.user_id;").map { |row| row['username'] }
 
 # 名前の数から繰り返し処理を何回行うかを決める
-data_count = username.length 
+data_count = report_id.length 
 num = 0
 
 # result_htmlに入っているHTML要素を初期化
@@ -79,4 +79,5 @@ File.open('../pages/diary_list.html', 'w') do |file|
 end
 
 puts 'HTMLを作成しました'
+puts report_id
 
