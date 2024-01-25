@@ -1,4 +1,4 @@
-fetch("after-header.html")
+fetch("../header/after-header.html")
 .then((response) => response.text())
 .then((data) => document.querySelector("#header").innerHTML = data);
 
