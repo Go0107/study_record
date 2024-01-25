@@ -11,7 +11,6 @@ server = WEBrick::HTTPServer.new(
   :SSLCertName  => [ [ 'CN', WEBrick::Utils::getservername ] ]
 )
 
-
 # 'assets'ディレクトリから静的なアセットを提供
 server.mount('/assets', WEBrick::HTTPServlet::FileHandler, File.join(Dir.pwd, '../assets'))
 server.mount('/js', WEBrick::HTTPServlet::FileHandler, File.join(Dir.pwd, '../js'))
@@ -81,7 +80,7 @@ server.mount_proc '/my_page.html' do |req, res|
     res.body = html_content
 end
 
-server.mount_proc '/before-header.html' do |req, res|
+server.mount_proc '/before_header.html' do |req, res|
     res.content_type = 'text/html'
     
     html_file_path = '../header/before_header.html'  # ファイルの実際のパスに変更してください
@@ -90,7 +89,7 @@ server.mount_proc '/before-header.html' do |req, res|
     res.body = html_content
 end
 
-server.mount_proc '/after-header.html' do |req, res|
+server.mount_proc '/after_header.html' do |req, res|
     res.content_type = 'text/html'
     
     html_file_path = '../header/after_header.html'  # ファイルの実際のパスに変更してください
