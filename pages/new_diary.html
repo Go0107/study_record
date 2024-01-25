@@ -17,15 +17,15 @@
                 <form action="" method="post" id="post-diary">
                     <div>
                         <label class="item-name date" for="date">日にち</label>
-                        <input class="text" type="date" id="today" name="today">
+                        <input class="text" type="date" id="today" name="date">
                     </div>
                     <div>
                         <label class="item-name" for="password">投稿者名</label>
                         <input class="text" type="text" id="name" name="name">
                     </div>
-                    <div>
+                    <div class="hours-wrapper">
                         <label class="item-name" for="study_time">学習時間</label>
-                        <select name="hours-number">
+                        <select name="study_time">
                             <option value="0">0</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -56,16 +56,17 @@
                     </div>
                     <div class="textarea-wrapper">
                         <label class="item-name textarea_name" for="password">学習内容</label>
-                        <textarea class="text" type="text" id="study-content" name="study-content"></textarea>
+                        <textarea class="text" type="text" id="study-content" name="study_content" maxlength="100" placeholder="100字以内で記述してください"></textarea>
                     </div>
                     <div class="textarea-wrapper">
                         <label class="item-name textarea_name" for="reflection">振り返り</label>
-                        <textarea class="text" type="text" id="reflection" name="reflection"></textarea>
+                        <textarea class="text reflection" type="text" id="reflection" name="reflection" maxlength="500" placeholder="500字以内で記述してください"></textarea>
                     </div>
                 </form>
             </div>
             <input class="submit" type="submit" value="投稿する" form="post-diary">
         </div>
     </div>
+    <script src="../js/new_diary.js"></script>
 </body>
 </html>

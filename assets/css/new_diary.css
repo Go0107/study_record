@@ -1,7 +1,7 @@
 .new-diary-wrapper {
     background-image: url("../images/background_logo.png");
     background-size: cover;
-    padding: 100px 0 200px 0;
+    padding: 80px 0 150px 0;
 }
 
 .container {
@@ -41,7 +41,7 @@ form {
 
 textarea {
     height: 100px;
-    width: 595px;
+    width: 570px;
     margin-top: 5px;
     font-size: large;
 }
@@ -73,3 +73,6 @@ select {
     border-radius: 5px;
 }
 
+.reflection {
+    margin-bottom: 0;
+}
