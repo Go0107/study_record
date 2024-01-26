@@ -62,6 +62,7 @@ server.mount_proc '/diary_list.html' do |req, res|
 end    
 
 server.mount_proc '/new_diary.html' do |req, res|
+    load 'new_diary.rb'   # load処理だと、webrickが上手く読み込めていない可能性もあるらしい…
     res.content_type = 'text/html'  
     
     html_file_path = '../pages/new_diary.html'  # ファイルの実際のパスに変更してください
@@ -69,6 +70,52 @@ server.mount_proc '/new_diary.html' do |req, res|
     
     res.body = html_content
 end  
+
+
+# new_diary.rb内に書いてあった処理をこちらに記述
+server.mount_proc '/post_report' do |req, res|
+
+  # MySQL接続情報
+  client = Mysql2::Client.new(
+    host: 'localhost',    # データベースのホスト名
+    username: 'root',     # データベースのユーザー名
+    password: '', # データベースのパスワード
+    database: 'study_record' # データベース名
+  )
+
+  params = WEBrick::HTTPUtils.parse_query(req.body)
+
+  puts params
+
+  # 入力データ
+  date = params['date']
+  username = params['username']
+  study_time = params['study_time']
+  study_content = params['study_content']
+  reflection = params['reflection']
+  created_at = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+
+  # 日付のフォーマットが正しいか確認
+  begin
+    Date.parse(date)
+  rescue ArgumentError
+    res.body = "エラーが発生しました: 無効な日付形式です。"
+    next
+  end
+
+  # SQLクエリの作成と実行
+  query = "INSERT INTO reports (user_id, date, study_time, study_content, reflection, created_at) VALUES (1, '#{date}', #{study_time.to_i}, '#{study_content}', '#{reflection}', '#{created_at}')"
+  
+  begin
+    result = client.query(query)
+    res.body = "データが正常に挿入されました。"
+  rescue => e
+    res.body = "エラーが発生しました: #{e.message}"
+  end
+  # この処理を実行後に、diary_list.htmlに飛ぶ
+  res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/diary_list.html')
+end
+
 
 server.mount_proc '/my_page.html' do |req, res|
     load 'my_page.rb'

@@ -9,7 +9,6 @@ client = Mysql2::Client.new(
     username: "root", 
     password: '@ZSExdr123', 
     database: 'study_record',
-    port: '3000'
 )
 
 # test変数にdiary_list.htmlファイルの中身を入れている
