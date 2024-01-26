@@ -173,6 +173,36 @@ server.mount_proc '/diary-list' do |req, res|
   
 end
 
+server.mount_proc '/logout' do |req, res|
+  server.mount_proc '/logout' do |req, res|
+    # ログアウトの処理が必要ならここに記述
+  
+    # ダイアログ表示用のHTMLを送信
+    res.content_type = 'text/html'
+    res.body = <<~HTML
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>ログアウト</title>
+        <script>
+          function confirmLogout() {
+            var result = confirm("本当にログアウトしますか？?");
+            if (result) {
+              window.location.href = "/top.html";  // OKが押されたらリダイレクト
+            } else {
+              history.go(-1);
+            }
+          }
+        </script>
+      </head>
+      <body onload="confirmLogout()">
+      </body>
+      </html>
+    HTML
+  end
+end
+
 trap('INT') { server.shutdown }
 
 server.start
