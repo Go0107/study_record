@@ -4,7 +4,7 @@ require 'webrick'
 require 'mysql2'
 require 'digest'
 
-$db_client = Mysql2::Client.new(
+db_client = Mysql2::Client.new(
   host: 'localhost',       # 全員、localhostでOKです
   username: 'root',        # ひとまず、権限を一番持っているrootユーザーにしました
   password: '0606araki',   # 自身のmysqlのrootユーザーのパスワードをここに入力します
@@ -20,7 +20,7 @@ def save_user_to_database(username, password)
     # 'users'テーブルにユーザデータを挿入するSQLクエリを構築し実行（How_to_Signupで解説）
     hashed_password = Digest::SHA256.hexdigest(password)
     insert_query = "INSERT INTO users (username, password) VALUES (?, ?)"
-    $db_client.query(insert_query, username, password)
+    db_client.query(insert_query, username, password)
     return true
   end
 end
@@ -47,10 +47,10 @@ server.mount_proc('/signup') do |req, res|
     # save_user_to_databaseメソッドを呼び出してユーザデータをデータベースに挿入
     if save_user_to_database(username, password)
       # サインアップの処理が成功したら'/home'のURLにリダイレクト
-      res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/home')
+      res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/home.html')
     else
       # ユーザー名またはパスワードが空の場合は前のページにリダイレクト
-      res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top')
+      res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
     end
   else
     # リクエストメソッドがPOSTでない場合はエラーレスポンスを設定
