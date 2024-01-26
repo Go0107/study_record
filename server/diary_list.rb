@@ -16,7 +16,7 @@ client = Mysql2::Client.new(
 test = File.read("../pages/diary_list.html")
 
 # reportsテーブルから全部のデータを取得
-result = client.query("SELECT * FROM reports")
+result = client.query("SELECT * FROM reports ORDER BY report_id DESC")
 
 # reportsテーブルから持ってきたカラムを配列で取得
 date = result.map { |row| row['date'] }
@@ -24,7 +24,7 @@ study_time = result.map { |row| row['study_time'] }
 created_time = result.map { |row| row['created_at'] }
 study_content = result.map { |row| row['study_content'] }
 reflection = result.map { |row| row['reflection'] }
-report_id = result.map { |row| row['report_id'] }.sort.reverse
+report_id = result.map { |row| row['report_id'] }
 username = client.query("SELECT u.username FROM reports r INNER JOIN users u ON r.user_id = u.user_id;").map { |row| row['username'] }
 
 # 名前の数から繰り返し処理を何回行うかを決める
@@ -79,5 +79,4 @@ File.open('../pages/diary_list.html', 'w') do |file|
 end
 
 puts 'HTMLを作成しました'
-puts report_id
 

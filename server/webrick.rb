@@ -98,20 +98,32 @@ server.mount_proc '/after_header.html' do |req, res|
     res.body = html_content
 end
 
-server.mount_proc '/delete_entry' do |req, res|
-  # POSTリクエストからデータを取得
-  data = JSON.parse(req.body)
+server.mount_proc '/delete_request' do |req, res|
+  # クエリパラメータからinfoListIdを取得
+  info_list_id = req.query['id']
 
-  # リクエストから削除対象のエントリーIDを取得
-  entry_id = data['entryId']
+  # mysql2というライブラリを使用してMySQLに接続するための記述
+  require'mysql2'
 
-  # ここでデータベースなどからエントリーを削除する処理を実装
-  client.query("DELETE FROM reports WHERE id = #{entry_id}")
+  # データベースにアクセスするための記述で自分のデータベースに合わせて変えていく
+  client = Mysql2::Client.new(
+      host: "localhost", 
+      username: "root", 
+      password: '@ZSExdr123', 
+      database: 'study_record',
+      port: '3000'
+  )
+  client.query("DELETE FROM reports WHERE report_id = #{info_list_id}")
 
-  # 削除が成功した場合、成功を示すJSONを返す
-  response_json = { success: true, message: 'エントリーを削除しました' }.to_json
-  res.status = 200
-  res.body = response_json
+end
+
+server.mount_proc '/diary-list' do |req, res|
+  # /diary_list パスへのリクエストがあった場合、new_diary.rbをロードする
+  load File.join(__dir__, 'new_diary.rb')
+  
+  # new_diary.rb内の処理でデータベースへの挿入が行われるため、ここでは何もしない
+  res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/diary_list.html')
+  
 end
 
 trap('INT') { server.shutdown }
