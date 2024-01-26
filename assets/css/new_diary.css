@@ -76,3 +76,11 @@ select {
 .reflection {
     margin-bottom: 0;
 }
+
+.hours-wrapper {
+    width: 300px;
+}
+
+.hours-entity {
+    margin-left: 2px;
+}
