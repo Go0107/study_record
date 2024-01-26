@@ -1,4 +1,4 @@
-fetch("/after_header.html")
+　fetch("/after_header.html")
 .then((response) => response.text())
 .then((data) => document.querySelector("#header").innerHTML = data);
 
@@ -11,7 +11,12 @@ deleteButtons.forEach(function(button) {
 
       if (infoList) {
         var infoListId = infoList.getAttribute('id');
-        deleteDatabase(infoListId);
+        var isConfirmed = confirm("本当に削除しますか？");
+
+        if (isConfirmed) {
+          // "はい" が押された場合に deleteDatabase 関数を実行
+          deleteDatabase(infoListId);
+        }
     }
   });
 });
