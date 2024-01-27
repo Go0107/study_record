@@ -64,7 +64,7 @@ server.mount_proc('/login') do |req, res| #form actionに対応
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '　　　　',
+      password: '0606araki',
       database: 'study_record'
     )
       
@@ -115,7 +115,7 @@ server.mount_proc '/signup' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '　　　　',
+      password: '0606araki',
       database: 'study_record',
       encoding: 'utf8' # 追加
     )
@@ -174,13 +174,89 @@ server.mount_proc '/my_page.html' do |req, res|
   if cookie_data && cookie_data.value != "" # && 以降はログアウト機能と対応　逆に書かない！
     user_id = cookie_data.value.to_i
 
-    res.content_type = 'text/html'    
+    # データベース接続
+    client = Mysql2::Client.new(
+      host: "localhost", 
+      username: "root", 
+      password: '0606araki', 
+      database: 'study_record',
+    )
+
+    # my_page.htmlの中身を一時的に保持する変数
+    test = File.read('../pages/my_page.html')
+
+    # reportsテーブルからuser_idに一致するデータを取得
+    result = client.query("SELECT * FROM reports WHERE user_id = #{user_id} ORDER BY created_at DESC")
+
+    date = result.map { |row| row['date'] }
+    study_time = result.map { |row| row['study_time'] }
+    created_time = result.map { |row| row['created_at'] }
+    study_content = result.map { |row| row['study_content'] }
+    reflection = result.map { |row| row['reflection'] }
+    report_id = result.map { |row| row['report_id'] }
+    username = 
+
+    # 名前の数から繰り返し処理を何回行うかを決める
+    data_count = report_id.length 
+    num = 0
+
+    # result_htmlに入っているHTML要素を初期化
+    result_html = ""
+
+    while num < data_count do
+      result.each do |row|
+        html_template = ERB.new('
+            <div class="info-list" id="<%= row["report_id"] %>">
+                <div class="top-items">
+                    <ul class="left-item">
+                        <li><h4>日付<br><%= row["date"] %></h4></li>
+                        <li><h4>学習時間<br><%= row["study_time"] %></h4></li>
+                        <li><h6>投稿日時:<%= row["created_at"] %></h6></li>
+                    </ul>
+                    <ul class="right-item">
+                        <h3>学習内容<h3>
+                        <li><h5><%= row["study_content"] %></h5></li>
+                    </ul>
+                </div>
+                <div class="bottom-items">
+                    <div class="text-content">
+                        <h3>振り返り</h3>
+                        <p><%= row["reflection"] %></p>
+                    </div>
+                    <div class="buttons">
+                        <input class="styled" type="button" value="編集" id="edit">
+                        <input class="styled" type="button" value="削除" id="delete">
+                    </div>
+                </div>
+            </div>
+        ')
+        result_html += html_template.result(binding)
+      end
+
+        num += 1
+    end
+
+
+    # すでに入っているhtmlを初期化する
+    test.sub!(/<main>.*?<\/main>/m, '<main><h1 class="title">マイページ</h1></main>')
+
+    # 既存のHTMLに新しいHTMLコードを挿入
+    modified_html = test.gsub(/<\/main>/, "#{result_html}</main>")
+
+    # 変更を適用した新しいHTMLを保存
+    File.open('../pages/my_page.html', 'w') do |file|
+      file.puts modified_html
       
+    end
+    
+    puts 'HTMLを作成しました'
+    res.content_type = 'text/html'
     html_file_path = '../pages/my_page.html'  
     html_content = File.read(html_file_path)
-    
     res.body = html_content
   else
+    res.status = 400
+    res.body = 'Bad Request'
     res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
   end
 end
@@ -209,7 +285,7 @@ server.mount_proc '/new_diary.html' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '　　　',
+      password: '0606araki',
       database: 'study_record'
     )
 
@@ -247,7 +323,7 @@ server.mount_proc '/post_report' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '　　　　',
+      password: '0606araki',
       database: 'study_record'
     )
 
@@ -323,7 +399,7 @@ server.mount_proc '/delete_request' do |req, res|
       client = Mysql2::Client.new(
           host: "localhost", 
           username: "root", 
-          password: '　　　　', 
+          password: '0606araki', 
           database: 'study_record',
       )
 
