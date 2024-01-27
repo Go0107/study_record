@@ -70,6 +70,15 @@ server.mount_proc('/login') do |req, res| #form actionに対応
 
       if result.count == 1
           # ログイン成功時の処理
+          user = result.first
+
+          # CookieにユーザーIDを保存
+          res.cookies << WEBrick::Cookie.new("user_id", user['user_id'].to_s)
+          
+
+          # 確認のためにputsを使用してコンソールに表示
+          # puts "Cookie added: user_id=#{user['user_id'].to_s}" 
+
           res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/home')
       else
           # ログイン失敗時の処理
@@ -85,7 +94,7 @@ end
 server.mount_proc '/signup.html' do |req, res|
   res.content_type = 'text/html'
   
-  html_file_path = '../pages/signup.html'  # ファイルの実際のパスに変更してください
+  html_file_path = '../pages/signup.html'
   html_content = File.read(html_file_path)
   
   res.body = html_content
@@ -109,33 +118,62 @@ server.mount_proc '/signup' do |req, res|
     # データベースに新しいユーザーを挿入
     stmt = client.prepare("INSERT INTO users (username, password) VALUES (?, ?)")
     stmt.execute(username, password)
-    puts username
-
 
     # レスポンスの設定（新規登録成功時は適切なリダイレクトを行う）
-    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/home')
+    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top')
   else
     res.status = 400
     res.body = 'Bad Request'
+    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
   end
 end
 
 server.mount_proc '/home.html' do |req, res|
+  cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
+  if cookie_data && cookie_data.value != "" # && 以降はログアウト機能と対応　逆に書かない！
+    user_id = cookie_data.value.to_i
+
     res.content_type = 'text/html'    
-    
-  html_file_path = '../pages/home.html'  
-  html_content = File.read(html_file_path)
-  
-  res.body = html_content
+
+    html_file_path = '../pages/home.html' 
+    html_content = File.read(html_file_path)
+
+    res.body = html_content
+  else
+    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
+  end
 end    
 
 server.mount_proc '/home' do |req, res|
-  res.content_type = 'text/html'    
-  
-html_file_path = '../pages/home.html' 
-html_content = File.read(html_file_path)
+  cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
+  if cookie_data && cookie_data.value != "" # && 以降はログアウト機能と対応　逆に書かない！
+    user_id = cookie_data.value.to_i
+    
+    res.content_type = 'text/html'    
+    
+    html_file_path = '../pages/home.html' 
+    html_content = File.read(html_file_path)
+    
+    res.body = html_content
+  else
+    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
+  end
+end
 
-res.body = html_content
+server.mount_proc '/my_page.html' do |req, res|
+  cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
+  if cookie_data && cookie_data.value != "" # && 以降はログアウト機能と対応　逆に書かない！
+    user_id = cookie_data.value.to_i
+
+    res.content_type = 'text/html'    
+      
+    html_file_path = '../pages/home.html'  
+    html_content = File.read(html_file_path)
+    
+    res.body = html_content
+  else
+    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
+  end
 end
 
 server.mount_proc '/diary_list.html' do |req, res|
@@ -204,15 +242,6 @@ server.mount_proc '/post_report' do |req, res|
 end
 
 
-server.mount_proc '/my_page.html' do |req, res|
-    load 'my_page.rb'
-    res.content_type = 'text/html'
-    
-    html_file_path = '../pages/my_page.html'  # ファイルの実際のパスに変更してください
-    html_content = File.read(html_file_path)
-    
-    res.body = html_content
-end
 
 server.mount_proc '/before_header.html' do |req, res|
     res.content_type = 'text/html'

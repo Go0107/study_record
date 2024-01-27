@@ -6,8 +6,8 @@ trap('INT') { server.shutdown }
 
 # '/logout'エンドポイントへのGETリクエストを処理
 server.mount_proc('/logout') do |req, res|
-    # ログアウトの処理を実行（セッションのクリアなど）
-    cookies.push(WEBrick::Cookie.new('user_id', '') { |c| c.expires = Time.now - 3600 })
+    # Cookieの削除（user_idを保持するCookieを削除）
+    res.cookies << WEBrick::Cookie.new("user_id", "") # 空文字列で上書き スペ-ス
     # ログアウトが完了したらトップページにリダイレクト
     res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top')
 end
