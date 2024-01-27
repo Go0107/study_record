@@ -42,7 +42,6 @@ while num < data_count do
                     <li><h4>名前<br><%= username[num] %></h4></li>
                     <li><h4>学習時間<br><%= study_time[num] %></h4></li>
                     <li><h6>投稿日時:<%= created_time[num] %></h6></li>
-                    <li><i class="fas fa-heart"></i></h3><span id="times">0</span></li>
                 </ul>
                 <ul class="right-item">
                     <h3>学習内容<h3>
