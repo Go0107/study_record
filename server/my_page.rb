@@ -3,6 +3,8 @@ require'mysql2'
 # erbというHTMLを生成するライブラリを使用するための記述
 require 'erb'
 
+require 'webrick.rb'
+
 # データベースにアクセスするための記述で自分のデータベースに合わせて変えていく
 client = Mysql2::Client.new(
     host: "localhost", 
@@ -17,7 +19,7 @@ test = File.read("../pages/my_page.html")
 
 # reportsテーブルから全部のデータを取得
 # ここでuser_idを絞れば後はおんなじ感じで行けるかも？
-result = client.query("SELECT * FROM reports")
+result = client.query("SELECT * FROM reports ORDER BY report_id DESC")
 
 # reportsテーブルから持ってきたカラムを配列で取得
 date = result.map { |row| row['date'] }
@@ -25,10 +27,11 @@ study_time = result.map { |row| row['study_time'] }
 created_time = result.map { |row| row['created_at'] }
 study_content = result.map { |row| row['study_content'] }
 reflection = result.map { |row| row['reflection'] }
+report_id = result.map { |row| row['report_id'] }
 username = client.query("SELECT u.username FROM reports r INNER JOIN users u ON r.user_id = u.user_id;").map { |row| row['username'] }
 
 # 名前の数から繰り返し処理を何回行うかを決める
-data_count = username.length 
+data_count = report_id.length 
 num = 0
 
 # result_htmlに入っているHTML要素を初期化
@@ -36,14 +39,13 @@ result_html = ""
 
 while num < data_count do
     html_template = ERB.new('
-        <div class="info-list" id="<%= num %>">
+        <div class="info-list" id="<%= report_id[num] %>">
             <div class="top-items">
                 <ul class="left-item">
                     <li><h4>日付<br><%= date[num] %></h4></li>
                     <li><h4>名前<br><%= username[num] %></h4></li>
                     <li><h4>学習時間<br><%= study_time[num] %></h4></li>
                     <li><h6>投稿日時:<%= created_time[num] %></h6></li>
-                    <li><i class="fas fa-heart"></i></h3><span id="times">0</span></li>
                 </ul>
                 <ul class="right-item">
                     <h3>学習内容<h3>
