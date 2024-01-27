@@ -60,7 +60,7 @@ server.mount_proc('/login') do |req, res| #form actionに対応
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '0606araki',
+      password: '@ZSExdr123',
       database: 'study_record'
     )
       
@@ -110,7 +110,7 @@ server.mount_proc '/signup' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '0606araki',
+      password: '@ZSExdr123',
       database: 'study_record',
       encoding: 'utf8' # 追加
     )
@@ -167,7 +167,7 @@ server.mount_proc '/my_page.html' do |req, res|
 
     res.content_type = 'text/html'    
       
-    html_file_path = '../pages/home.html'  
+    html_file_path = '../pages/my_page.html'  
     html_content = File.read(html_file_path)
     
     res.body = html_content
@@ -187,7 +187,7 @@ server.mount_proc '/diary_list.html' do |req, res|
 end    
 
 server.mount_proc '/new_diary.html' do |req, res|
-    load 'new_diary.rb'   # load処理だと、webrickが上手く読み込めていない可能性もあるらしい…
+    # load 'new_diary.rb'   # load処理だと、webrickが上手く読み込めていない可能性もあるらしい…
     res.content_type = 'text/html'  
     
     html_file_path = '../pages/new_diary.html'  # ファイルの実際のパスに変更してください
@@ -204,7 +204,7 @@ server.mount_proc '/post_report' do |req, res|
   client = Mysql2::Client.new(
     host: 'localhost',    # データベースのホスト名
     username: 'root',     # データベースのユーザー名
-    password: '', # データベースのパスワード
+    password: '@ZSExdr123', # データベースのパスワード
     database: 'study_record' # データベース名
   )
 
@@ -290,33 +290,32 @@ server.mount_proc '/diary-list' do |req, res|
 end
 
 server.mount_proc '/logout' do |req, res|
-  server.mount_proc '/logout' do |req, res|
-    # ログアウトの処理が必要ならここに記述
-  
-    # ダイアログ表示用のHTMLを送信
-    res.content_type = 'text/html'
-    res.body = <<~HTML
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="UTF-8">
-        <title>ログアウト</title>
-        <script>
-          function confirmLogout() {
-            var result = confirm("本当にログアウトしますか？?");
-            if (result) {
-              window.location.href = "/top.html";  // OKが押されたらリダイレクト
-            } else {
-              history.go(-1);
-            }
+  # ログアウトの処理が必要ならここに記述
+  res.cookies << WEBrick::Cookie.new("user_id", "")
+
+  # ダイアログ表示用のHTMLを送信
+  res.content_type = 'text/html'
+  res.body = <<~HTML
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>ログアウト</title>
+      <script>
+        function confirmLogout() {
+          var result = confirm("本当にログアウトしますか？?");
+          if (result) {
+            window.location.href = "/top.html";  // OKが押されたらリダイレクト
+          } else {
+            history.go(-1);
           }
-        </script>
-      </head>
-      <body onload="confirmLogout()">
-      </body>
-      </html>
-    HTML
-  end
+        }
+      </script>
+    </head>
+    <body onload="confirmLogout()">
+    </body>
+    </html>
+  HTML
 end
 
 trap('INT') { server.shutdown }
