@@ -9,9 +9,8 @@ require 'webrick.rb'
 client = Mysql2::Client.new(
     host: "localhost", 
     username: "root", 
-    password: '@ZSExdr123', 
+    password: '　　　　', 
     database: 'study_record',
-    port: '3000'
 )
 
 # test変数にmy_page.htmlファイルの中身を入れている

@@ -14,14 +14,14 @@
                 <h1>日報を編集する</h1>
             </div>
             <div class="form-wrapper">
-                <form action="" method="post" id="post_diary">
+                <form action="/edit_report" method="post" id="post_diary">
                     <div>
                         <label class="item-name date" for="name">日にち</label>
                         <input class="text" type="date" id="today" name="date">
                     </div>
                     <div>
                         <label class="item-name" for="password">投稿者名</label>
-                        <input class="text" type="text" id="name" name="name">
+                        <input class="text" type="text" id="username" name="username">
                     </div>
                     <div>
                         <label class="item-name" for="study_time">学習時間</label>
@@ -67,6 +67,6 @@
             <input class="submit" type="submit" value="投稿する" form="post_diary">
         </div>
     </div>
-    <script src="../js/new_diary.js"></script>
+    <script src="../js/edit_diary.js"></script>
 </body>
 </html>

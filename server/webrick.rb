@@ -22,15 +22,17 @@ server.mount('/js', WEBrick::HTTPServlet::FileHandler, File.join(Dir.pwd, '../js
 # http://localhost:3000 にアクセスしたときにtopページを表示したかったけど他のページにも悪影響
 # end
 
-server.mount_proc '/top' do |req, res|
-  res.content_type = 'text/html'
+# server.mount_proc '/top' do |req, res|
+#   res.content_type = 'text/html'
   
-  html_file_path = '../pages/top.html'  # ファイルの実際のパスに変更してください
-  html_content = File.read(html_file_path)
+#   html_file_path = '../pages/top.html'  # ファイルの実際のパスに変更してください
+#   html_content = File.read(html_file_path)
   
-  res.body = html_content
-end
+#   res.body = html_content
+# end
 
+
+# トップ画面
 server.mount_proc '/top.html' do |req, res|
   res.content_type = 'text/html'
   
@@ -49,6 +51,8 @@ server.mount_proc '/login.html' do |req, res|
   res.body = html_content
 end 
 
+
+# ログイン処理
 server.mount_proc('/login') do |req, res| #form actionに対応
   if req.request_method == 'POST'
       # リクエストボディからパラメータを解析
@@ -60,7 +64,7 @@ server.mount_proc('/login') do |req, res| #form actionに対応
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '@ZSExdr123',
+      password: '　　　　',
       database: 'study_record'
     )
       
@@ -79,10 +83,10 @@ server.mount_proc('/login') do |req, res| #form actionに対応
           # 確認のためにputsを使用してコンソールに表示
           # puts "Cookie added: user_id=#{user['user_id'].to_s}" 
 
-          res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/home')
+          res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/home.html')
       else
           # ログイン失敗時の処理
-          res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top')
+          res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
       end
   else
       res.status = 400
@@ -91,6 +95,7 @@ server.mount_proc('/login') do |req, res| #form actionに対応
 end
 
 
+# アカウント作成画面
 server.mount_proc '/signup.html' do |req, res|
   res.content_type = 'text/html'
   
@@ -110,7 +115,7 @@ server.mount_proc '/signup' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '@ZSExdr123',
+      password: '　　　　',
       database: 'study_record',
       encoding: 'utf8' # 追加
     )
@@ -120,7 +125,7 @@ server.mount_proc '/signup' do |req, res|
     stmt.execute(username, password)
 
     # レスポンスの設定（新規登録成功時は適切なリダイレクトを行う）
-    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top')
+    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
   else
     res.status = 400
     res.body = 'Bad Request'
@@ -128,6 +133,8 @@ server.mount_proc '/signup' do |req, res|
   end
 end
 
+
+# ログイン後のトップ画面
 server.mount_proc '/home.html' do |req, res|
   cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
   if cookie_data && cookie_data.value != "" # && 以降はログアウト機能と対応　逆に書かない！
@@ -144,22 +151,24 @@ server.mount_proc '/home.html' do |req, res|
   end
 end    
 
-server.mount_proc '/home' do |req, res|
-  cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
-  if cookie_data && cookie_data.value != "" # && 以降はログアウト機能と対応　逆に書かない！
-    user_id = cookie_data.value.to_i
+# server.mount_proc '/home' do |req, res|
+#   cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
+#   if cookie_data && cookie_data.value != "" # && 以降はログアウト機能と対応　逆に書かない！
+#     user_id = cookie_data.value.to_i
     
-    res.content_type = 'text/html'    
+#     res.content_type = 'text/html'    
     
-    html_file_path = '../pages/home.html' 
-    html_content = File.read(html_file_path)
+#     html_file_path = '../pages/home.html' 
+#     html_content = File.read(html_file_path)
     
-    res.body = html_content
-  else
-    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
-  end
-end
+#     res.body = html_content
+#   else
+#     res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
+#   end
+# end
 
+
+# マイページ画面
 server.mount_proc '/my_page.html' do |req, res|
   cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
   if cookie_data && cookie_data.value != "" # && 以降はログアウト機能と対応　逆に書かない！
@@ -176,6 +185,8 @@ server.mount_proc '/my_page.html' do |req, res|
   end
 end
 
+
+# 日報一覧画面
 server.mount_proc '/diary_list.html' do |req, res|
   load 'diary_list.rb'
   res.content_type = 'text/html'    
@@ -186,63 +197,96 @@ server.mount_proc '/diary_list.html' do |req, res|
   res.body = html_content
 end    
 
+
+# 新規投稿画面
 server.mount_proc '/new_diary.html' do |req, res|
-    # load 'new_diary.rb'   # load処理だと、webrickが上手く読み込めていない可能性もあるらしい…
-    res.content_type = 'text/html'  
-    
-    html_file_path = '../pages/new_diary.html'  # ファイルの実際のパスに変更してください
+  cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
+  if cookie_data && cookie_data.value != ""
+    # ログインしているユーザーのIDを取得
+    user_id = cookie_data.value.to_i
+
+    # MySQL接続情報
+    client = Mysql2::Client.new(
+      host: 'localhost',
+      username: 'root',
+      password: '　　　',
+      database: 'study_record'
+    )
+
+    # ユーザー名を取得
+    username_query = "SELECT username FROM users WHERE user_id = #{user_id}"
+    username_result = client.query(username_query)
+    username = username_result.first['username']
+
+    # ファイルの実際のパスに変更してください
+    html_file_path = '../pages/new_diary.html'
     html_content = File.read(html_file_path)
-    
+
+    # ユーザー名を投稿者名のinput欄に挿入
+    html_content.sub!('<input class="text" type="text" id="username" name="username">', "<input class=\"text\" type=\"text\" id=\"username\" name=\"username\" value=\"#{username}\" readonly>")
+
+    res.content_type = 'text/html'
     res.body = html_content
-end  
-
-
-# new_diary.rb内に書いてあった処理をこちらに記述
-server.mount_proc '/post_report' do |req, res|
-
-  # MySQL接続情報
-  client = Mysql2::Client.new(
-    host: 'localhost',    # データベースのホスト名
-    username: 'root',     # データベースのユーザー名
-    password: '@ZSExdr123', # データベースのパスワード
-    database: 'study_record' # データベース名
-  )
-
-  params = WEBrick::HTTPUtils.parse_query(req.body)
-
-  puts params
-
-  # 入力データ
-  date = params['date']
-  username = params['username']
-  study_time = params['study_time']
-  study_content = params['study_content']
-  reflection = params['reflection']
-  created_at = Time.now.strftime('%Y-%m-%d %H:%M:%S')
-
-  # 日付のフォーマットが正しいか確認
-  begin
-    Date.parse(date)
-  rescue ArgumentError
-    res.body = "エラーが発生しました: 無効な日付形式です。"
-    next
+  else
+    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
   end
-
-  # SQLクエリの作成と実行
-  query = "INSERT INTO reports (user_id, date, study_time, study_content, reflection, created_at) VALUES (1, '#{date}', #{study_time.to_i}, '#{study_content}', '#{reflection}', '#{created_at}')"
-  
-  begin
-    result = client.query(query)
-    res.body = "データが正常に挿入されました。"
-  rescue => e
-    res.body = "エラーが発生しました: #{e.message}"
-  end
-  # この処理を実行後に、diary_list.htmlに飛ぶ
-  res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/diary_list.html')
 end
 
 
+# 新規投稿したデータをデータベースに保管する処理
+server.mount_proc '/post_report' do |req, res|
+  # cookiesからログインしているuser_idを取得
+  cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
 
+  if cookie_data && cookie_data.value != ""
+    # cookieデータから取り出したユーザーのIDを数値に変換
+    user_id = cookie_data.value.to_i
+
+    puts "user_id:#{user_id}"
+    # MySQL接続情報
+    client = Mysql2::Client.new(
+      host: 'localhost',
+      username: 'root',
+      password: '　　　　',
+      database: 'study_record'
+    )
+
+    params = WEBrick::HTTPUtils.parse_query(req.body)
+    puts "user_id:#{user_id}"
+
+    # 入力データ
+    date = params['date']
+    puts date
+    study_time = params['study_time']
+    puts study_time
+    study_content = params['study_content']
+    puts study_content
+    reflection = params['reflection']
+    puts reflection
+    created_at = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+    puts created_at
+
+    # 日付のフォーマットが正しいか確認
+    begin
+      Date.parse(date)
+    rescue ArgumentError
+      res.body = "エラーが発生しました: 無効な日付形式です。"
+      next
+    end
+    # SQLクエリの作成と実行
+    query = "INSERT INTO reports (user_id, date, study_time, study_content, reflection, created_at) VALUES (#{user_id}, '#{date}', #{study_time.to_i}, '#{study_content}', '#{reflection}', '#{created_at}')"
+    puts query
+    result = client.query(query)
+    res.body = "データが正常に挿入されました。"     
+    # データの挿入が成功したら、diary_list.html にリダイレクト
+    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/diary_list.html')
+  else
+    res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
+  end
+end
+
+
+# ログイン前のヘッダー
 server.mount_proc '/before_header.html' do |req, res|
     res.content_type = 'text/html'
     
@@ -252,6 +296,8 @@ server.mount_proc '/before_header.html' do |req, res|
     res.body = html_content
 end
 
+
+# ログイン後のヘッダー
 server.mount_proc '/after_header.html' do |req, res|
     res.content_type = 'text/html'
     
@@ -261,34 +307,62 @@ server.mount_proc '/after_header.html' do |req, res|
     res.body = html_content
 end
 
+
+# 削除処理
 server.mount_proc '/delete_request' do |req, res|
   # クエリパラメータからinfoListIdを取得
   info_list_id = req.query['id']
+  # cookiesからログインしているuser_idを取得
+  cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
+  
+  if cookie_data && cookie_data.value != ""
+      # cookieデータから取り出したユーザーのIDを数値に変換
+      user_id = cookie_data.value.to_i
 
-  # mysql2というライブラリを使用してMySQLに接続するための記述
-  require'mysql2'
+      # データベースにアクセスするための記述で自分のデータベースに合わせて変えていく
+      client = Mysql2::Client.new(
+          host: "localhost", 
+          username: "root", 
+          password: '　　　　', 
+          database: 'study_record',
+      )
 
-  # データベースにアクセスするための記述で自分のデータベースに合わせて変えていく
-  client = Mysql2::Client.new(
-      host: "localhost", 
-      username: "root", 
-      password: '@ZSExdr123', 
-      database: 'study_record',
-      port: '3000'
-  )
-  client.query("DELETE FROM reports WHERE report_id = #{info_list_id}")
+    # 対象の投稿記事のuser_idを取得
+    result = client.query("SELECT user_id FROM reports WHERE report_id = #{info_list_id}").first
+    if result.nil?
+      # 該当する投稿記事が存在しない場合はエラーレスポンスを返す
+      res.status = 404
+      res.body = 'Not Found'
+    elsif result['user_id'] != user_id
+      # ログインしているユーザーのIDと投稿記事のユーザーIDが一致しない場合はエラーレスポンスを返す
+      res.status = 403
+      res.body = 'Forbidden'
+    else
+      # DELETE文を実行
+      client.query("DELETE FROM reports WHERE report_id = #{info_list_id}")
 
+      # 成功した場合は正常なレスポンスを返す
+      res.status = 200
+      res.body = 'Delete successful'
+    end
+  else
+    # ログインしていない場合はエラーレスポンスを返す
+    res.status = 401
+    res.body = 'Unauthorized'
+  end
 end
 
-server.mount_proc '/diary-list' do |req, res|
-  # /diary_list パスへのリクエストがあった場合、new_diary.rbをロードする
-  load File.join(__dir__, 'new_diary.rb')
+# server.mount_proc '/diary-list' do |req, res|
+#   # /diary_list パスへのリクエストがあった場合、new_diary.rbをロードする
+#   load File.join(__dir__, 'new_diary.rb')
   
-  # new_diary.rb内の処理でデータベースへの挿入が行われるため、ここでは何もしない
-  res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/diary_list.html')
+#   # new_diary.rb内の処理でデータベースへの挿入が行われるため、ここでは何もしない
+#   res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/diary_list.html')
   
-end
+# end
 
+
+# ログアウト処理
 server.mount_proc '/logout' do |req, res|
   # ログアウトの処理が必要ならここに記述
   res.cookies << WEBrick::Cookie.new("user_id", "")
