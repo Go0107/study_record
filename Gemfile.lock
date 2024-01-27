@@ -3,6 +3,7 @@ GEM
   specs:
     cgi (0.4.1)
     mysql2 (0.5.5)
+    rack (3.0.8)
     webrick (1.8.1)
 
 PLATFORMS
@@ -12,6 +13,7 @@ PLATFORMS
 DEPENDENCIES
   cgi
   mysql2
+  rack
   webrick
 
 BUNDLED WITH
