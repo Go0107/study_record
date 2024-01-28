@@ -1,5 +1,6 @@
 require 'webrick'
 require 'mysql2'
+require 'bcrypt'
 
 server = WEBrick::HTTPServer.new(
   :ServerName => "localhost",
@@ -16,21 +17,6 @@ server = WEBrick::HTTPServer.new(
 # 'assets'ディレクトリから静的なアセットを提供
 server.mount('/assets', WEBrick::HTTPServlet::FileHandler, File.join(Dir.pwd, '../assets'))
 server.mount('/js', WEBrick::HTTPServlet::FileHandler, File.join(Dir.pwd, '../js'))
-
-# server.mount_proc '/' do |req, res| 
-#   res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
-# http://localhost:3000 にアクセスしたときにtopページを表示したかったけど他のページにも悪影響
-# end
-
-# server.mount_proc '/top' do |req, res|
-#   res.content_type = 'text/html'
-  
-#   html_file_path = '../pages/top.html'  # ファイルの実際のパスに変更してください
-#   html_content = File.read(html_file_path)
-  
-#   res.body = html_content
-# end
-
 
 # トップ画面
 server.mount_proc '/top.html' do |req, res|
@@ -64,33 +50,35 @@ server.mount_proc('/login') do |req, res| #form actionに対応
       client = Mysql2::Client.new(
         host: 'localhost',
         username: 'root',
-        password: '　　　　　',
+        password: '0606araki',
         database: 'study_record'
       )
       
       # データベースからユーザーを検索 クエリをバインド変数を使用して構築
-      stmt = client.prepare("SELECT * FROM users WHERE username = ? AND password = ?")
-      result = stmt.execute(username, password) 
+      stmt = client.prepare("SELECT * FROM users WHERE username = ?")
+      result = stmt.execute(username)
 
       if result.count == 1
-          # ログイン成功時の処理
-          user = result.first
+        # ログイン成功時の処理
+        user = result.first
+
+        # パスワードが一致するか確認（BCrypt gemを使用）
+        if BCrypt::Password.new(user['password']) == password
 
           # CookieにユーザーIDを保存
           res.cookies << WEBrick::Cookie.new("user_id", user['user_id'].to_s)
-          
-
-          # 確認のためにputsを使用してコンソールに表示
-          # puts "Cookie added: user_id=#{user['user_id'].to_s}" 
-
           res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/home.html')
+        else
+          # パスワードが一致しない場合の処理
+          res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/login.html')
+        end
       else
           # ログイン失敗時の処理
           res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
       end
   else
-      res.status = 400
-      res.body = 'Bad Request'
+    res.status = 400
+    res.body = 'Bad Request'
   end
 end
 
@@ -111,18 +99,21 @@ server.mount_proc '/signup' do |req, res|
     username = params['username']
     password = params['password']
 
+    # パスワードをハッシュ化
+    hashed_password = BCrypt::Password.create(password)
+
     # MySQL2に接続
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '　　　　　',
+      password: '0606araki',
       database: 'study_record',
       encoding: 'utf8' # 追加
     )
 
     # データベースに新しいユーザーを挿入
     stmt = client.prepare("INSERT INTO users (username, password) VALUES (?, ?)")
-    stmt.execute(username, password)
+    stmt.execute(username, hashed_password)
 
     # レスポンスの設定（新規登録成功時は適切なリダイレクトを行う）
     res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
@@ -151,23 +142,6 @@ server.mount_proc '/home.html' do |req, res|
   end
 end    
 
-# server.mount_proc '/home' do |req, res|
-#   cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
-#   if cookie_data && cookie_data.value != "" # && 以降はログアウト機能と対応　逆に書かない！
-#     user_id = cookie_data.value.to_i
-    
-#     res.content_type = 'text/html'    
-    
-#     html_file_path = '../pages/home.html' 
-#     html_content = File.read(html_file_path)
-    
-#     res.body = html_content
-#   else
-#     res.set_redirect(WEBrick::HTTPStatus::SeeOther, '/top.html')
-#   end
-# end
-
-
 # マイページ画面
 server.mount_proc '/my_page.html' do |req, res|
   cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
@@ -178,7 +152,7 @@ server.mount_proc '/my_page.html' do |req, res|
     client = Mysql2::Client.new(
       host: "localhost", 
       username: "root", 
-      password: '　　　　　', 
+      password: '0606araki', 
       database: 'study_record',
     )
 
@@ -290,7 +264,7 @@ server.mount_proc '/get_edit_report' do |req, res|
           client = Mysql2::Client.new(
             host: 'localhost',
             username: 'root',
-            password: '　　　　　',
+            password: '0606araki',
             database: 'study_record'
           )
 
@@ -349,7 +323,7 @@ server.mount_proc '/edit_diary.html' do |req, res|
   client = Mysql2::Client.new(
     host: 'localhost',
     username: 'root',
-    password: '　　　　　',
+    password: '0606araki',
     database: 'study_record'
   )
 
@@ -461,7 +435,7 @@ server.mount_proc '/post_edit_report' do |req, res|
       client = Mysql2::Client.new(
         host: 'localhost',
         username: 'root',
-        password: '　　　　　',
+        password: '0606araki',
         database: 'study_record'
       )
 
@@ -518,7 +492,7 @@ server.mount_proc '/new_diary.html' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '　　　　　',
+      password: '0606araki',
       database: 'study_record'
     )
 
@@ -555,7 +529,7 @@ server.mount_proc '/post_report' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '　　　　　',
+      password: '0606araki',
       database: 'study_record'
     )
 
@@ -625,7 +599,7 @@ server.mount_proc '/delete_request' do |req, res|
     client = Mysql2::Client.new(
       host: "localhost", 
       username: "root", 
-      password: '　　　　　', 
+      password: '0606araki', 
       database: 'study_record',
     )
 
