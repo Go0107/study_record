@@ -64,7 +64,7 @@ server.mount_proc('/login') do |req, res| #form actionに対応
       client = Mysql2::Client.new(
         host: 'localhost',
         username: 'root',
-        password: 'Vv618gno1',
+        password: '　　　　　',
         database: 'study_record'
       )
       
@@ -115,7 +115,7 @@ server.mount_proc '/signup' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: 'Vv618gno1',
+      password: '　　　　　',
       database: 'study_record',
       encoding: 'utf8' # 追加
     )
@@ -178,7 +178,7 @@ server.mount_proc '/my_page.html' do |req, res|
     client = Mysql2::Client.new(
       host: "localhost", 
       username: "root", 
-      password: 'Vv618gno1', 
+      password: '　　　　　', 
       database: 'study_record',
     )
 
@@ -290,7 +290,7 @@ server.mount_proc '/get_edit_report' do |req, res|
           client = Mysql2::Client.new(
             host: 'localhost',
             username: 'root',
-            password: 'Vv618gno1',
+            password: '　　　　　',
             database: 'study_record'
           )
 
@@ -349,7 +349,7 @@ server.mount_proc '/edit_diary.html' do |req, res|
   client = Mysql2::Client.new(
     host: 'localhost',
     username: 'root',
-    password: 'Vv618gno1',
+    password: '　　　　　',
     database: 'study_record'
   )
 
@@ -461,7 +461,7 @@ server.mount_proc '/post_edit_report' do |req, res|
       client = Mysql2::Client.new(
         host: 'localhost',
         username: 'root',
-        password: 'Vv618gno1',
+        password: '　　　　　',
         database: 'study_record'
       )
 
@@ -518,7 +518,7 @@ server.mount_proc '/new_diary.html' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: 'Vv618gno1',
+      password: '　　　　　',
       database: 'study_record'
     )
 
@@ -555,7 +555,7 @@ server.mount_proc '/post_report' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: 'Vv618gno1',
+      password: '　　　　　',
       database: 'study_record'
     )
 
@@ -625,7 +625,7 @@ server.mount_proc '/delete_request' do |req, res|
     client = Mysql2::Client.new(
       host: "localhost", 
       username: "root", 
-      password: 'Vv618gno1', 
+      password: '　　　　　', 
       database: 'study_record',
     )
 
