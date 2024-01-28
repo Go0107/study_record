@@ -1,9 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    bcrypt (3.1.20)
     cgi (0.4.1)
     mysql2 (0.5.5)
-    rack (3.0.8)
     webrick (1.8.1)
 
 PLATFORMS
@@ -11,9 +11,9 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  bcrypt
   cgi
   mysql2
-  rack
   webrick
 
 BUNDLED WITH
