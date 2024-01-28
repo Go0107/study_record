@@ -61,12 +61,12 @@ server.mount_proc('/login') do |req, res| #form actionに対応
       password = params['password']
       
       # MySQL2に接続
-    client = Mysql2::Client.new(
-      host: 'localhost',
-      username: 'root',
-      password: '0606araki',
-      database: 'study_record'
-    )
+      client = Mysql2::Client.new(
+        host: 'localhost',
+        username: 'root',
+        password: '　　　　　',
+        database: 'study_record'
+      )
       
       # データベースからユーザーを検索 クエリをバインド変数を使用して構築
       stmt = client.prepare("SELECT * FROM users WHERE username = ? AND password = ?")
@@ -115,7 +115,7 @@ server.mount_proc '/signup' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '0606araki',
+      password: '　　　　　',
       database: 'study_record',
       encoding: 'utf8' # 追加
     )
@@ -178,7 +178,7 @@ server.mount_proc '/my_page.html' do |req, res|
     client = Mysql2::Client.new(
       host: "localhost", 
       username: "root", 
-      password: '0606araki', 
+      password: '　　　　　', 
       database: 'study_record',
     )
 
@@ -224,7 +224,7 @@ server.mount_proc '/my_page.html' do |req, res|
                         <p><%= row["reflection"] %></p>
                     </div>
                     <div class="buttons">
-                        <input class="styled" type="button" value="編集" id="edit">
+                        <input class="styled edit" type="button" value="編集" id="edit">
                         <input class="styled" type="button" value="削除" id="delete">
                     </div>
                 </div>
@@ -274,6 +274,242 @@ server.mount_proc '/diary_list.html' do |req, res|
 end    
 
 
+# 「編集」が押されたときの処理
+server.mount_proc '/get_edit_report' do |req, res|
+  cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
+  if cookie_data && cookie_data.value != ""
+      # ログインしているユーザーのIDを取得
+      user_id = cookie_data.value.to_i
+
+      # クエリパラメータからreport_idを取得
+      report_id_to_edit = req.query['report_id']&.to_i
+
+      if report_id_to_edit
+
+          # MySQL接続情報
+          client = Mysql2::Client.new(
+            host: 'localhost',
+            username: 'root',
+            password: '　　　　　',
+            database: 'study_record'
+          )
+
+          # 編集ボタンが属している記事のreport_idに対応するデータを取得
+          begin
+            result = client.query("SELECT * FROM reports WHERE report_id = #{report_id_to_edit} AND user_id = #{user_id}")
+
+            # 取得したデータを適切に処理する（ここでは単に最初の行を取得している）
+            report_data = result.first
+
+            # データが存在する場合
+            if report_data
+                # 編集ページにリダイレクトするJavaScriptをレスポンスに追加
+                res.body = <<-HTML
+                  <script>
+                    window.location.href = 'http://localhost:3000/edit_diary.html?report_id=#{report_id_to_edit}';
+                  </script>
+                HTML
+            else
+                # データが存在しない場合の処理を追加（例えばエラーページを表示するなど）
+                res.status = 404
+                res.body = 'Report not found.'
+            end
+          rescue => e
+            puts "Error: #{e.message}"
+            puts e.backtrace
+            res.status = 500
+            res.body = 'Internal Server Error.'
+          ensure
+            # 必ずクライアントをクローズする
+            client.close if client
+          end
+    else
+          # report_idが指定されていない場合の処理を追加
+          res.status = 400
+          res.body = 'Bad Request. report_id is required.'
+    end
+  else
+    # ログインしていない場合の処理を追加（例えばログインページにリダイレクトするなど）
+    res.status = 401
+    res.body = 'Unauthorized.'
+  end
+end
+
+
+# 日報編集画面
+server.mount_proc '/edit_diary.html' do |req, res|
+  res.content_type = 'text/html'
+
+  # クエリパラメータからreport_idを取得
+  report_id_to_edit = req.query['report_id']&.to_i
+
+  # puts "report_id:#{report_id_to_edit}"
+
+  # MySQL接続情報
+  client = Mysql2::Client.new(
+    host: 'localhost',
+    username: 'root',
+    password: '　　　　　',
+    database: 'study_record'
+  )
+
+  # 編集ボタンが属している記事のreport_idに対応するデータを取得
+  result = client.query("SELECT * FROM reports WHERE report_id = #{report_id_to_edit}")
+  row = result.first
+
+   # ユーザー名を取得
+   user_id = row['user_id'] 
+   username_query = "SELECT username FROM users WHERE user_id = #{user_id}"
+   username_result = client.query(username_query)
+   username = username_result.first['username']
+
+  # HTML形式でクライアントに返す
+  html_response = <<~HTML
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <link rel="stylesheet" href="../assets/css/new_diary.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Study Record.</title>
+  </head>
+  <body>
+    <div id="header"></div>
+    <div class="new-diary-wrapper">
+    <div class="container">
+      <div class="title">
+        <h1>日報を編集する</h1>
+      </div>
+      <div class="form-wrapper">
+        <form action="/post_edit_report" method="post" id="post_diary">
+          <div>
+            <label class="item-name date" for="name">日にち</label>
+            <input class="text" type="date" id="today" name="date" value="#{row['date']}">
+          </div>
+          <div>
+            <label class="item-name" for="username">投稿者名</label>
+            <input class="text" type="text" id="username" name="username" value="#{username}" readonly>
+          </div>
+          <div>
+            <label class="item-name" for="study_time">学習時間</label>
+            <select name="study_time">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+              <option value="16">16</option>
+              <option value="17">17</option>
+              <option value="18">18</option>
+              <option value="19">19</option>
+              <option value="20">20</option>
+              <option value="21">21</option>
+              <option value="22">22</option>
+              <option value="23">23</option>
+              <option value="24">24</option>
+            </select>
+            <label class="hours-entity" for="">時間</label>
+          </div>
+          <div class="textarea-wrapper">
+            <label class="item-name textarea_name" for="study_content">学習内容</label>
+            <textarea class="text" type="text" id="study-content" name="study_content" maxlength="100" placeholder="100字以内で記述してください">#{row['study_content']}</textarea>
+          </div>
+          <div class="textarea-wrapper">
+            <label class="item-name textarea_name" for="reflection">振り返り</label>
+            <textarea class="text" type="text" id="reflection" name="reflection" maxlength="500" placeholder="500字以内で記述してください">#{row['reflection']}</textarea>
+          </div>
+        </form>
+      </div>
+      <input class="submit" type="submit" value="投稿する" form="post_diary">
+    </div>
+    </div>
+</body>
+</html>
+  HTML
+  puts "row: #{row.inspect}" # 追加
+  puts "row['date']: #{row['date']}" # 追
+  res.body = html_response
+end
+
+
+# 編集画面で「投稿する」が押されたときの処理
+server.mount_proc '/post_edit_report' do |req, res|
+  puts "aaaaa"
+  cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
+  
+  if cookie_data && cookie_data.value != ""
+      # ログインしているユーザーのIDを取得
+      user_id = cookie_data.value.to_i
+
+      puts "user_id: #{user_id}"
+      puts "report_id_to_edit (before conversion): #{req.query['report_id']}"
+
+      # クエリパラメータから編集対象のreport_idを取得
+      report_id_to_edit = req.query['report_id'].to_i
+      
+      puts "report_id_to_edit (after conversion): #{report_id_to_edit}"
+
+      # MySQL接続情報
+      client = Mysql2::Client.new(
+        host: 'localhost',
+        username: 'root',
+        password: '　　　　　　',
+        database: 'study_record'
+      )
+
+      params = WEBrick::HTTPUtils.parse_query(req.body)
+
+      # ユーザー名を取得
+      username_query = "SELECT username FROM users WHERE user_id = #{user_id}"
+      username_result = client.query(username_query)
+      username = username_result.first['username']
+
+      # 入力データ
+      date = params['date']
+      study_time = params['study_time']
+      study_content = params['study_content']
+      reflection = params['reflection']
+
+      # SQLクエリの作成と実行
+      update_query = <<~SQL
+      UPDATE reports
+      SET
+        date = '#{date}',
+        study_time = #{study_time},
+        study_content = '#{study_content}',
+        reflection = '#{reflection}'
+      WHERE
+        report_id = #{report_id_to_edit} AND user_id = #{user_id}
+      SQL
+
+      puts "update_query: #{update_query}"
+
+      client.query(update_query)
+      client.close
+
+      # データの更新が成功したら、diary_list.html にリダイレクト
+      res.status = 302
+      res['Location'] = '/diary_list.html'
+    else
+      # ログインしていない場合、edit_diary.html にリダイレクト
+      res.status = 302
+      res['Location'] = '/top.html'
+    end
+end
+
+
+
 # 新規投稿画面
 server.mount_proc '/new_diary.html' do |req, res|
   cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
@@ -285,7 +521,7 @@ server.mount_proc '/new_diary.html' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '0606araki',
+      password: '　　　　　',
       database: 'study_record'
     )
 
@@ -308,7 +544,6 @@ server.mount_proc '/new_diary.html' do |req, res|
   end
 end
 
-
 # 新規投稿したデータをデータベースに保管する処理
 server.mount_proc '/post_report' do |req, res|
   # cookiesからログインしているuser_idを取得
@@ -323,7 +558,7 @@ server.mount_proc '/post_report' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '0606araki',
+      password: '　　　　　　',
       database: 'study_record'
     )
 
@@ -332,16 +567,10 @@ server.mount_proc '/post_report' do |req, res|
 
     # 入力データ
     date = params['date']
-    puts date
     study_time = params['study_time']
-    puts study_time
     study_content = params['study_content']
-    puts study_content
     reflection = params['reflection']
-    puts reflection
     created_at = Time.now.strftime('%Y-%m-%d %H:%M:%S')
-    puts created_at
-
     # 日付のフォーマットが正しいか確認
     begin
       Date.parse(date)
@@ -392,16 +621,16 @@ server.mount_proc '/delete_request' do |req, res|
   cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
   
   if cookie_data && cookie_data.value != ""
-      # cookieデータから取り出したユーザーのIDを数値に変換
-      user_id = cookie_data.value.to_i
+    # cookieデータから取り出したユーザーのIDを数値に変換
+    user_id = cookie_data.value.to_i
 
-      # データベースにアクセスするための記述で自分のデータベースに合わせて変えていく
-      client = Mysql2::Client.new(
-          host: "localhost", 
-          username: "root", 
-          password: '0606araki', 
-          database: 'study_record',
-      )
+    # データベースにアクセスするための記述で自分のデータベースに合わせて変えていく
+    client = Mysql2::Client.new(
+      host: "localhost", 
+      username: "root", 
+      password: '　　　　　　', 
+      database: 'study_record',
+    )
 
     # 対象の投稿記事のuser_idを取得
     result = client.query("SELECT user_id FROM reports WHERE report_id = #{info_list_id}").first
@@ -427,6 +656,12 @@ server.mount_proc '/delete_request' do |req, res|
     res.body = 'Unauthorized'
   end
 end
+
+# もし他にもサーバー関連の処理があれば、ここに追加する
+
+# サーバーを起動する
+# server.start
+
 
 # server.mount_proc '/diary-list' do |req, res|
 #   # /diary_list パスへのリクエストがあった場合、new_diary.rbをロードする
