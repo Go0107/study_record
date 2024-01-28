@@ -7,7 +7,7 @@ require 'erb'
 client = Mysql2::Client.new(
     host: "localhost", 
     username: "root", 
-    password: '0606araki', 
+    password: '　　　　　', 
     database: 'study_record',
 )
 
@@ -18,6 +18,7 @@ test = File.read("../pages/diary_list.html")
 result = client.query("SELECT * FROM reports ORDER BY report_id DESC")
 
 # reportsテーブルから持ってきたカラムを配列で取得
+report_id = result.map { |row| row['report_id'] } # 編集ボタンを対応させるために追加
 date = result.map { |row| row['date'] }
 study_time = result.map { |row| row['study_time'] }
 created_time = result.map { |row| row['created_at'] }
@@ -60,8 +61,8 @@ while num < data_count do
                     <p><%= reflection[num] %></p>
                 </div>
                 <div class="buttons">
-                    <input class="styled edit" type="button" value="編集" id="edit">
-                    <input class="styled" type="button" value="削除" id="delete">
+                <input class="styled edit" type="button" value="編集" data-report-id="<%= report_id[num] %>">
+                <input class="styled" type="button" value="削除" id="delete">
                 </div>
             </div>
         </div>
