@@ -7,7 +7,7 @@
 # db_client = Mysql2::Client.new(
 #   host: 'localhost',       # 全員、localhostでOKです
 #   username: 'root',        # ひとまず、権限を一番持っているrootユーザーにしました
-#   password: '0606araki',   # 自身のmysqlのrootユーザーのパスワードをここに入力します
+#   password: 'aaa',   # 自身のmysqlのrootユーザーのパスワードをここに入力します
 #   database: 'study_record' # 全員、study_recordでOKです（自身のPCにstudy_recordのデータベースを作成してください）
 # )
 
