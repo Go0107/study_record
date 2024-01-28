@@ -64,7 +64,7 @@ server.mount_proc('/login') do |req, res| #form actionに対応
       client = Mysql2::Client.new(
         host: 'localhost',
         username: 'root',
-        password: '　　　　　',
+        password: 'Vv618gno1',
         database: 'study_record'
       )
       
@@ -115,7 +115,7 @@ server.mount_proc '/signup' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '　　　　　',
+      password: 'Vv618gno1',
       database: 'study_record',
       encoding: 'utf8' # 追加
     )
@@ -178,7 +178,7 @@ server.mount_proc '/my_page.html' do |req, res|
     client = Mysql2::Client.new(
       host: "localhost", 
       username: "root", 
-      password: '　　　　　', 
+      password: 'Vv618gno1', 
       database: 'study_record',
     )
 
@@ -290,7 +290,7 @@ server.mount_proc '/get_edit_report' do |req, res|
           client = Mysql2::Client.new(
             host: 'localhost',
             username: 'root',
-            password: '　　　　　',
+            password: 'Vv618gno1',
             database: 'study_record'
           )
 
@@ -341,7 +341,7 @@ server.mount_proc '/edit_diary.html' do |req, res|
   res.content_type = 'text/html'
 
   # クエリパラメータからreport_idを取得
-  report_id_to_edit = req.query['report_id']&.to_i
+  @report_id_to_edit = req.query['report_id']&.to_i
 
   # puts "report_id:#{report_id_to_edit}"
 
@@ -349,12 +349,12 @@ server.mount_proc '/edit_diary.html' do |req, res|
   client = Mysql2::Client.new(
     host: 'localhost',
     username: 'root',
-    password: '　　　　　',
+    password: 'Vv618gno1',
     database: 'study_record'
   )
 
   # 編集ボタンが属している記事のreport_idに対応するデータを取得
-  result = client.query("SELECT * FROM reports WHERE report_id = #{report_id_to_edit}")
+  result = client.query("SELECT * FROM reports WHERE report_id = #{@report_id_to_edit}")
   row = result.first
 
    # ユーザー名を取得
@@ -454,17 +454,14 @@ server.mount_proc '/post_edit_report' do |req, res|
 
       puts "user_id: #{user_id}"
       puts "report_id_to_edit (before conversion): #{req.query['report_id']}"
-
-      # クエリパラメータから編集対象のreport_idを取得
-      report_id_to_edit = req.query['report_id'].to_i
-      
-      puts "report_id_to_edit (after conversion): #{report_id_to_edit}"
+     
+      puts "report_id_to_edit (after conversion): #{@report_id_to_edit}"
 
       # MySQL接続情報
       client = Mysql2::Client.new(
         host: 'localhost',
         username: 'root',
-        password: '　　　　　　',
+        password: 'Vv618gno1',
         database: 'study_record'
       )
 
@@ -490,7 +487,7 @@ server.mount_proc '/post_edit_report' do |req, res|
         study_content = '#{study_content}',
         reflection = '#{reflection}'
       WHERE
-        report_id = #{report_id_to_edit} AND user_id = #{user_id}
+        report_id = #{@report_id_to_edit} AND user_id = #{user_id}
       SQL
 
       puts "update_query: #{update_query}"
@@ -521,7 +518,7 @@ server.mount_proc '/new_diary.html' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '　　　　　',
+      password: 'Vv618gno1',
       database: 'study_record'
     )
 
@@ -558,7 +555,7 @@ server.mount_proc '/post_report' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: '　　　　　　',
+      password: 'Vv618gno1',
       database: 'study_record'
     )
 
@@ -628,7 +625,7 @@ server.mount_proc '/delete_request' do |req, res|
     client = Mysql2::Client.new(
       host: "localhost", 
       username: "root", 
-      password: '　　　　　　', 
+      password: 'Vv618gno1', 
       database: 'study_record',
     )
 
