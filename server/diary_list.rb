@@ -7,7 +7,7 @@ require 'erb'
 client = Mysql2::Client.new(
     host: "localhost", 
     username: "root", 
-    password: '0606araki', 
+    password: '　　　　　　', 
     database: 'study_record',
 )
 
