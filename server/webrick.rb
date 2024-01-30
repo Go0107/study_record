@@ -422,7 +422,7 @@ end
 
 # 編集画面で「投稿する」が押されたときの処理
 server.mount_proc '/post_edit_report' do |req, res|
-  puts "aaaaa"
+  puts "0606arakiaa"
   cookie_data = req.cookies.find { |cookie| cookie.name == 'user_id' }
   
   if cookie_data && cookie_data.value != ""
