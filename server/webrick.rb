@@ -50,7 +50,7 @@ server.mount_proc('/login') do |req, res| #form actionに対応
       client = Mysql2::Client.new(
         host: 'localhost',
         username: 'root',
-        password: 'aaa',
+        password: '　　　　　',
         database: 'study_record'
       )
       
@@ -106,7 +106,7 @@ server.mount_proc '/signup' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: 'aaa',
+      password: '　　　　　',
       database: 'study_record',
       encoding: 'utf8' # 追加
     )
@@ -152,7 +152,7 @@ server.mount_proc '/my_page.html' do |req, res|
     client = Mysql2::Client.new(
       host: "localhost", 
       username: "root", 
-      password: 'aaa', 
+      password: '　　　　　', 
       database: 'study_record',
     )
 
@@ -170,7 +170,7 @@ server.mount_proc '/my_page.html' do |req, res|
     report_id = result.map { |row| row['report_id'] }
     
     # user_idに対応するユーザー名を取得するように修正
-    username_query = "SELECT u.username FROM reports r INNER JOIN users u ON r.user_id = u.user_id ORDER BY r.report_id DESC"
+    username_query = "SELECT username FROM users WHERE user_id = #{user_id}"
     username_result = client.query(username_query)
     username = username_result.map { |row| row['username'] }
 
@@ -187,7 +187,7 @@ server.mount_proc '/my_page.html' do |req, res|
               <div class="top-items">
                   <ul class="left-item">
                       <li><h4>【日付】<br><%= date[num] %></h4></li>
-                      <li><h4>【名前】<br><%= username[num] %></h4></li>
+                      <li><h4>【名前】<br><%= username[0] %></h4></li>
                       <li><h4>【学習時間】<br><%= study_time[num] %></h4></li>
                       <li><h6>【投稿日時】:<%= created_time[num] %></h6></li>
                   </ul>
@@ -267,7 +267,7 @@ server.mount_proc '/get_edit_report' do |req, res|
           client = Mysql2::Client.new(
             host: 'localhost',
             username: 'root',
-            password: 'aaa',
+            password: '　　　　　　',
             database: 'study_record'
           )
 
@@ -326,7 +326,7 @@ server.mount_proc '/edit_diary.html' do |req, res|
   client = Mysql2::Client.new(
     host: 'localhost',
     username: 'root',
-    password: 'aaa',
+    password: '　　　　　　',
     database: 'study_record'
   )
 
@@ -438,7 +438,7 @@ server.mount_proc '/post_edit_report' do |req, res|
       client = Mysql2::Client.new(
         host: 'localhost',
         username: 'root',
-        password: 'aaa',
+        password: '　　　　　',
         database: 'study_record'
       )
 
@@ -495,7 +495,7 @@ server.mount_proc '/new_diary.html' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: 'aaa',
+      password: '　　　　　　',
       database: 'study_record'
     )
 
@@ -532,7 +532,7 @@ server.mount_proc '/post_report' do |req, res|
     client = Mysql2::Client.new(
       host: 'localhost',
       username: 'root',
-      password: 'aaa',
+      password: '　　　　　',
       database: 'study_record'
     )
 
@@ -602,7 +602,7 @@ server.mount_proc '/delete_request' do |req, res|
     client = Mysql2::Client.new(
       host: "localhost", 
       username: "root", 
-      password: 'aaa', 
+      password: '　　　　　　', 
       database: 'study_record',
     )
 
